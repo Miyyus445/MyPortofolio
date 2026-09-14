@@ -1,0 +1,45 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Photo {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  imageUrl    String
+  category    String
+  exifData    Json?
+  isFeatured  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@map("photos")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  repoUrl     String?
+  demoUrl     String?
+  techStack   String[]
+  thumbnail   String?
+  createdAt   DateTime @default(now())
+
+  @@map("projects")
+}
+
+model Experience {
+  id           String   @id @default(uuid())
+  role         String
+  organization String
+  period       String
+  description  String
+  type         String
+  createdAt    DateTime @default(now())
+
+  @@map("experiences")
+}
