@@ -12,4 +12,20 @@ export class PhotosService {
       take: limit,
     });
   }
+
+  create(data: Record<string, any>) {
+    return this.prisma.photo.create({ data: data as any });
+  }
+
+  update(id: string, data: Record<string, any>) {
+    return this.prisma.photo.update({ where: { id }, data: data as any });
+  }
+
+  setFeatured(id: string, isFeatured: boolean) {
+    return this.prisma.photo.update({ where: { id }, data: { isFeatured } });
+  }
+
+  remove(id: string) {
+    return this.prisma.photo.delete({ where: { id } });
+  }
 }
