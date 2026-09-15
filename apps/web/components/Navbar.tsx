@@ -15,6 +15,10 @@ export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-black/60">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
