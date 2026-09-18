@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
+import * as bcrypt from "bcryptjs";
 
 const connectionString = process.env.DATABASE_URL;
 if (!connectionString) {
@@ -12,14 +13,11 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-  const email = "admin@example.com";
-  const plainPassword = "password123";
+  const email = "miyyus.445@gmail.com";
+  const plainPassword = "24112007z";
 
-  // Hash dengan bcrypt (built-in Bun, format $2b$)
-  const hashedPassword = await Bun.password.hash(plainPassword, {
-    algorithm: "bcrypt",
-    cost: 10,
-  });
+  // Hash dengan bcryptjs
+  const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
   const admin = await prisma.admin.upsert({
     where: { email },
