@@ -12,6 +12,16 @@ interface AuthContextValue {
   loading: boolean;
 }
 
+const TOKEN_KEY = "admin_token";
+
+function setTokenCookie(token: string) {
+  document.cookie = `${TOKEN_KEY}=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+}
+
+function clearTokenCookie() {
+  document.cookie = `${TOKEN_KEY}=; path=/; max-age=0; SameSite=Lax`;
+}
+
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -20,13 +30,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem("admin_token");
+    const stored = localStorage.getItem(TOKEN_KEY);
     if (stored) {
       setToken(stored);
+      setTokenCookie(stored);
       fetchMe(stored)
         .then((u) => setUser(u))
         .catch(() => {
-          localStorage.removeItem("admin_token");
+          localStorage.removeItem(TOKEN_KEY);
+          clearTokenCookie();
           setToken(null);
         })
         .finally(() => setLoading(false));
@@ -44,13 +56,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!r.ok) throw new Error("Invalid credentials");
       return r.json();
     });
-    localStorage.setItem("admin_token", accessToken);
+    localStorage.setItem(TOKEN_KEY, accessToken);
+    setTokenCookie(accessToken);
     setToken(accessToken);
     setUser(u);
   };
 
   const logout = () => {
-    localStorage.removeItem("admin_token");
+    localStorage.removeItem(TOKEN_KEY);
+    clearTokenCookie();
     setToken(null);
     setUser(null);
   };

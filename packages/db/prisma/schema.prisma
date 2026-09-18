@@ -43,3 +43,12 @@ model Experience {
 
   @@map("experiences")
 }
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  @@map("admins")
+}

@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 
 function AdminLoginPageContent() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { login } = useAuth();
   const [email, setEmail] = useState("");
@@ -21,8 +20,7 @@ function AdminLoginPageContent() {
     setLoading(true);
     try {
       await login(email, password);
-      router.push(redirect);
-      router.refresh();
+      window.location.href = redirect;
     } catch (err) {
       setError(err instanceof Error ? err.message : "Login failed");
     } finally {
