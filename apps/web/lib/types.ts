@@ -5,6 +5,8 @@ export interface Photo {
   descriptionId: string | null;
   imageUrl: string;
   category: string;
+  camera: string | null;
+  instagramUrl: string | null;
   isFeatured: boolean;
   createdAt: string;
 }
@@ -45,6 +47,8 @@ export interface CreatePhotoInput {
   descriptionId?: string | null;
   imageUrl: string;
   category: string;
+  camera?: string | null;
+  instagramUrl?: string | null;
   isFeatured?: boolean;
 }
 

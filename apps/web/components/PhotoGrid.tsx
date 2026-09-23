@@ -19,6 +19,7 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
   const [active, setActive] = useState<number | null>(null);
+  const [cameraFilter, setCameraFilter] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setStatus("loading");
@@ -36,6 +37,14 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
     void load();
   }, [load]);
 
+  const handleCameraFilter = (camera: string) => {
+    setCameraFilter(cameraFilter === camera ? null : camera);
+  };
+
+  const filteredPhotos = cameraFilter
+    ? photos.filter((p) => p.camera === cameraFilter)
+    : photos;
+
   if (status === "loading") {
     return (
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true" aria-label="Memuat foto">
@@ -50,18 +59,47 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
     return <ErrorState message={error} onRetry={() => setAttempt((a) => a + 1)} />;
   }
 
-  if (photos.length === 0) {
-    return <p className="text-zinc-500">Belum ada foto.</p>;
+  if (filteredPhotos.length === 0) {
+    return (
+      <div className="text-center py-8">
+        {cameraFilter ? (
+          <p className="text-zinc-500">
+            Tidak ada foto dengan kamera "{cameraFilter}".{" "}
+            <button
+              onClick={() => setCameraFilter(null)}
+              className="text-blue-600 hover:underline"
+            >
+              Tampilkan semua
+            </button>
+          </p>
+        ) : (
+          <p className="text-zinc-500">Belum ada foto.</p>
+        )}
+      </div>
+    );
   }
 
   return (
     <>
+      {cameraFilter && (
+        <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-center justify-between">
+          <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+            Filter: {cameraFilter}
+          </span>
+          <button
+            onClick={() => setCameraFilter(null)}
+            className="text-blue-600 hover:underline text-sm"
+          >
+            Hapus filter
+          </button>
+        </div>
+      )}
       <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
-        {photos.map((photo, i) => (
-          <PhotoCard key={photo.id} photo={photo} onOpen={() => setActive(i)} />
+        {filteredPhotos.map((photo, i) => (
+          <PhotoCard key={photo.id} photo={photo} onOpen={() => setActive(i)} onFilterByCamera={handleCameraFilter} />
         ))}
       </div>
-      <Lightbox photos={photos} index={active} onClose={() => setActive(null)} onNavigate={setActive} />
+      <Lightbox photos={filteredPhotos} index={active} onClose={() => setActive(null)} onNavigate={setActive} />
     </>
   );
 }

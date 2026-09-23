@@ -25,6 +25,8 @@ export default function AdminPhotosPage() {
     descriptionId: "",
     imageUrl: "",
     category: "",
+    camera: "",
+    instagramUrl: "",
     isFeatured: false,
   });
   const [saving, setSaving] = useState(false);
@@ -50,7 +52,7 @@ export default function AdminPhotosPage() {
   }, []);
 
   const resetForm = () => {
-    setFormData({ title: "", description: "", descriptionId: "", imageUrl: "", category: "", isFeatured: false });
+    setFormData({ title: "", description: "", descriptionId: "", imageUrl: "", category: "", camera: "", instagramUrl: "", isFeatured: false });
     setEditingId(null);
     setShowForm(false);
     setError("");
@@ -77,6 +79,8 @@ export default function AdminPhotosPage() {
       descriptionId: photo.descriptionId || "",
       imageUrl: photo.imageUrl,
       category: photo.category,
+      camera: photo.camera || "",
+      instagramUrl: photo.instagramUrl || "",
       isFeatured: photo.isFeatured,
     });
     setEditingId(photo.id);
@@ -107,6 +111,8 @@ export default function AdminPhotosPage() {
         imageUrl,
         description: formData.description?.trim() ? formData.description : null,
         descriptionId: formData.descriptionId?.trim() ? formData.descriptionId : null,
+        camera: formData.camera?.trim() ? formData.camera : null,
+        instagramUrl: formData.instagramUrl?.trim() ? formData.instagramUrl : null,
       };
       if (editingId) {
         await updatePhoto(editingId, payload, token!);
@@ -284,6 +290,32 @@ export default function AdminPhotosPage() {
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 required
+                className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label htmlFor="camera" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                Camera / Device
+              </label>
+              <input
+                id="camera"
+                type="text"
+                placeholder="contoh: Panasonic Lumix DMC-TZ7"
+                value={formData.camera ?? ""}
+                onChange={(e) => setFormData({ ...formData, camera: e.target.value })}
+                className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label htmlFor="instagramUrl" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                Instagram Post URL
+              </label>
+              <input
+                id="instagramUrl"
+                type="url"
+                placeholder="https://instagram.com/p/..."
+                value={formData.instagramUrl ?? ""}
+                onChange={(e) => setFormData({ ...formData, instagramUrl: e.target.value })}
                 className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>

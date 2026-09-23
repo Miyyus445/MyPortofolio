@@ -9,9 +9,10 @@ import type { Photo } from "../lib/types";
 interface Props {
   photo: Photo;
   onOpen: (photo: Photo) => void;
+  onFilterByCamera?: (camera: string) => void;
 }
 
-export function PhotoCard({ photo, onOpen }: Props) {
+export function PhotoCard({ photo, onOpen, onFilterByCamera }: Props) {
   const [showTranslation, setShowTranslation] = useState(false);
   const [translatedText, setTranslatedText] = useState<string | null>(null);
   const [isTranslating, setIsTranslating] = useState(false);
@@ -39,6 +40,13 @@ export function PhotoCard({ photo, onOpen }: Props) {
       setShowTranslation(true);
     } finally {
       setIsTranslating(false);
+    }
+  };
+
+  const handleCameraClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (photo.camera && onFilterByCamera) {
+      onFilterByCamera(photo.camera);
     }
   };
 
@@ -76,6 +84,16 @@ export function PhotoCard({ photo, onOpen }: Props) {
         <span className="absolute left-3 top-3 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-white">
           {photo.category}
         </span>
+        {photo.camera && (
+          <button
+            type="button"
+            onClick={handleCameraClick}
+            className="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-medium text-zinc-800 hover:bg-white transition-colors shadow-sm"
+            aria-label={`Filter by ${photo.camera}`}
+          >
+            {photo.camera}
+          </button>
+        )}
       </div>
       <div className="p-4">
         <h3 className="font-semibold">{photo.title}</h3>

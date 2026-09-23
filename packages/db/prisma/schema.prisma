@@ -13,6 +13,8 @@ model Photo {
   descriptionId String?
   imageUrl      String
   category      String
+  camera        String?
+  instagramUrl  String?
   exifData      Json?
   isFeatured    Boolean  @default(false)
   createdAt     DateTime @default(now())
