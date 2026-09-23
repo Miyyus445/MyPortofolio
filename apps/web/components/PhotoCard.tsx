@@ -88,7 +88,7 @@ export function PhotoCard({ photo, onOpen, onFilterByCamera }: Props) {
           <button
             type="button"
             onClick={handleCameraClick}
-            className="absolute right-3 top-3 rounded-full bg-white/90 px-2 py-1 text-xs font-medium text-zinc-800 hover:bg-white transition-colors shadow-sm"
+            className="absolute bottom-3 right-3 rounded-full bg-black/40 backdrop-blur-md border border-white/10 px-2 py-0.5 text-[9px] font-medium text-zinc-300 hover:bg-black/60 transition-colors"
             aria-label={`Filter by ${photo.camera}`}
           >
             {photo.camera}

@@ -23,7 +23,7 @@ export function Navbar() {
     <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-black/60">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="/" className="text-lg font-bold tracking-tight">
-          Portfolio
+          Portofolio
         </Link>
         <div className="hidden items-center gap-1 md:flex">
           {LINKS.map((link) => (
