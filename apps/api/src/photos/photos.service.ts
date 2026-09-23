@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
+import { existsSync, unlinkSync } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class PhotosService {
@@ -25,7 +27,15 @@ export class PhotosService {
     return this.prisma.photo.update({ where: { id }, data: { isFeatured } });
   }
 
-  remove(id: string) {
-    return this.prisma.photo.delete({ where: { id } });
+  async remove(id: string) {
+    const photo = await this.prisma.photo.findUnique({ where: { id } });
+    await this.prisma.photo.delete({ where: { id } });
+    if (photo?.imageUrl?.startsWith('/uploads/')) {
+      const filePath = join(process.cwd(), photo.imageUrl);
+      if (existsSync(filePath)) {
+        unlinkSync(filePath);
+      }
+    }
+    return { deleted: true };
   }
 }

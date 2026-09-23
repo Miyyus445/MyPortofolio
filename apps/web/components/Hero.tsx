@@ -8,7 +8,7 @@ export function Hero() {
         Capturing light, shipping software.
       </h1>
       <p className="mt-4 max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
-        Portfolio fotografi dan proyek IT — jelajahi galeri foto pilihan, project terbaru, dan riwayat pengalaman.
+        Portofolio fotografi dan proyek IT — jelajahi galeri foto pilihan, project terbaru, dan riwayat pengalaman.
       </p>
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/gallery" className="rounded-xl bg-black px-5 py-3 text-sm font-semibold text-white hover:bg-zinc-800 dark:bg-white dark:text-black">

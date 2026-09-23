@@ -7,14 +7,15 @@ generator client {
 }
 
 model Photo {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  imageUrl    String
-  category    String
-  exifData    Json?
-  isFeatured  Boolean  @default(false)
-  createdAt   DateTime @default(now())
+  id            String   @id @default(uuid())
+  title         String
+  description   String?
+  descriptionId String?
+  imageUrl      String
+  category      String
+  exifData      Json?
+  isFeatured    Boolean  @default(false)
+  createdAt     DateTime @default(now())
 
   @@map("photos")
 }

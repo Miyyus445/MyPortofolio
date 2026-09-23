@@ -2,6 +2,7 @@ export interface Photo {
   id: string;
   title: string;
   description: string | null;
+  descriptionId: string | null;
   imageUrl: string;
   category: string;
   isFeatured: boolean;
@@ -40,7 +41,8 @@ export interface LoginResponse {
 
 export interface CreatePhotoInput {
   title: string;
-  description?: string;
+  description?: string | null;
+  descriptionId?: string | null;
   imageUrl: string;
   category: string;
   isFeatured?: boolean;

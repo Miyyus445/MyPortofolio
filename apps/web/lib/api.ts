@@ -14,6 +14,12 @@ import type {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
+export function resolveImageUrl(url: string) {
+  if (!url) return url;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${API_URL}${url.startsWith("/") ? url : `/${url}`}`;
+}
+
 async function getJson<T>(path: string): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, { cache: "no-store" });
   if (!res.ok) {
@@ -97,6 +103,27 @@ export async function deletePhoto(id: string, token?: string): Promise<void> {
 
 export async function setPhotoFeatured(id: string, isFeatured: boolean, token?: string): Promise<Photo> {
   return authFetch<Photo>(`/api/photos/${id}/featured`, { method: "PATCH", body: JSON.stringify({ isFeatured }) }, token);
+}
+
+export async function uploadPhoto(file: File, token?: string): Promise<{ imageUrl: string }> {
+  const authToken = token ?? getStoredToken();
+  const formData = new FormData();
+  formData.append('file', file);
+  const headers: Record<string, string> = {};
+  if (authToken) {
+    headers['Authorization'] = `Bearer ${authToken}`;
+  }
+  const res = await fetch(`${API_URL}/api/photos/upload`, {
+    method: 'POST',
+    headers,
+    body: formData,
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: 'Upload failed' }));
+    throw new Error(err.message || `Upload failed: ${res.status}`);
+  }
+  return res.json() as Promise<{ imageUrl: string }>;
 }
 
 export async function createProject(data: CreateProjectInput, token?: string): Promise<Project> {
