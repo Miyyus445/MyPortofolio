@@ -13,6 +13,11 @@ interface Props {
   limit?: number;
 }
 
+function parseGenres(category: string | null | undefined): string[] {
+  if (!category) return [];
+  return category.split(",").map((c) => c.trim()).filter(Boolean);
+}
+
 export function PhotoGrid({ featuredOnly = false, limit }: Props) {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [status, setStatus] = useState<"loading" | "error" | "ready">("loading");
@@ -26,7 +31,6 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
     setStatus("loading");
     try {
       const data = await fetchPhotos({ featured: featuredOnly ? true : undefined, limit });
-      // Pastikan foto terbaru tampil paling awal (kiri): urut desc by createdAt
       const sorted = [...data].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       );
@@ -51,26 +55,27 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
     setActive(null);
   };
 
-  // Ekstrak daftar genre unik dari semua foto
-  const genres = useMemo(() => {
+  const allGenres = useMemo(() => {
     const set = new Set<string>();
     for (const p of photos) {
-      if (p.category) set.add(p.category);
+      for (const g of parseGenres(p.category)) {
+        set.add(g);
+      }
     }
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }, [photos]);
 
   const filteredPhotos = photos.filter((p) => {
     if (cameraFilter && p.camera !== cameraFilter) return false;
-    if (genreFilter && p.category !== genreFilter) return false;
+    if (genreFilter && !parseGenres(p.category).includes(genreFilter)) return false;
     return true;
   });
 
   if (status === "loading") {
     return (
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" aria-busy="true" aria-label="Memuat foto">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3" aria-busy="true" aria-label="Memuat foto">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-64" />
+          <Skeleton key={i} className="aspect-[4/5]" />
         ))}
       </div>
     );
@@ -90,9 +95,8 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
 
   return (
     <>
-      {/* Baris filter pill genre */}
-      {genres.length > 0 && (
-        <div className="mb-4 flex flex-wrap gap-2" role="group" aria-label="Filter genre">
+      {allGenres.length > 0 && (
+        <div className="mb-6 flex flex-wrap gap-2" role="group" aria-label="Filter genre">
           <button
             type="button"
             onClick={() => setGenreFilter(null)}
@@ -105,7 +109,7 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
           >
             Semua
           </button>
-          {genres.map((genre) => (
+          {allGenres.map((genre) => (
             <button
               key={genre}
               type="button"
@@ -151,7 +155,7 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
           </p>
         </div>
       ) : (
-        <div className="columns-1 gap-4 sm:columns-2 lg:columns-3">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
           {filteredPhotos.map((photo, i) => (
             <PhotoCard key={photo.id} photo={photo} onOpen={() => setActive(i)} onFilterByCamera={handleCameraFilter} />
           ))}
