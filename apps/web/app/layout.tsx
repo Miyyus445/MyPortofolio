@@ -13,7 +13,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Portfolio — Photography & Engineering",
+  title: "Portofolio — Photography & Engineering",
   description: "Photography gallery, IT projects, and experience.",
 };
 
