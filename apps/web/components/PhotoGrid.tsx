@@ -73,9 +73,9 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
 
   if (status === "loading") {
     return (
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3" aria-busy="true" aria-label="Memuat foto">
+      <div className="columns-1 gap-6 space-y-6 sm:columns-2 md:columns-3" aria-busy="true" aria-label="Memuat foto">
         {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="aspect-[4/5]" />
+          <Skeleton key={i} className="mb-6" />
         ))}
       </div>
     );
@@ -155,7 +155,7 @@ export function PhotoGrid({ featuredOnly = false, limit }: Props) {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
+        <div className="columns-1 gap-6 space-y-6 sm:columns-2 md:columns-3">
           {filteredPhotos.map((photo, i) => (
             <PhotoCard key={photo.id} photo={photo} onOpen={() => setActive(i)} onFilterByCamera={handleCameraFilter} />
           ))}

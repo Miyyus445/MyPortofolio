@@ -77,16 +77,16 @@ export function PhotoCard({ photo, onOpen, onFilterByCamera }: Props) {
       onClick={handleOpen}
       onKeyDown={handleKeyDown}
       aria-label={`Buka foto ${photo.title}`}
-      className="group cursor-pointer overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900"
+      className="group cursor-pointer overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md dark:border-zinc-800 dark:bg-zinc-900 break-inside-avoid mb-6"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-zinc-100">
+      <div className="relative overflow-hidden bg-zinc-100 break-inside-avoid mb-6">
         <Image
           src={resolveImageUrl(photo.imageUrl)}
           alt={photo.title}
           width={800}
-          height={1000}
+          height={600}
           unoptimized
-          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+          className="w-full h-auto transition duration-300 group-hover:scale-105"
         />
         {genres.length > 0 && (
           <div className="absolute left-3 top-3 flex flex-wrap gap-1">
