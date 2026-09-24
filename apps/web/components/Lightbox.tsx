@@ -24,6 +24,7 @@ export function Lightbox({ photos, index, onClose, onNavigate, onFilterByCamera 
   const [showTranslation, setShowTranslation] = useState(false);
   const [translatedText, setTranslatedText] = useState<string | null>(null);
   const [isTranslating, setIsTranslating] = useState(false);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   const onKey = useCallback(
     (e: KeyboardEvent) => {
@@ -47,6 +48,7 @@ export function Lightbox({ photos, index, onClose, onNavigate, onFilterByCamera 
   useEffect(() => {
     setShowTranslation(false);
     setTranslatedText(null);
+    setIsZoomed(false);
   }, [index]);
 
   const handleTranslateClick = async (e: React.MouseEvent) => {
@@ -97,43 +99,49 @@ export function Lightbox({ photos, index, onClose, onNavigate, onFilterByCamera 
 
   return (
     <div role="dialog" aria-modal="true" aria-label={photo.title} className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 md:p-6" onClick={onClose}>
-      <div
-        className="grid w-full max-w-6xl overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-zinc-900 md:h-[85vh] md:grid-cols-[1.4fr_1fr]"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Kolom Kiri: Foto bersih */}
-        <div className="relative flex min-h-[240px] items-center justify-center bg-zinc-950/50 md:min-h-0">
-          <Image
-            src={resolveImageUrl(photo.imageUrl)}
-            alt={photo.title}
-            width={1400}
-            height={1000}
-            unoptimized
-            className="h-full w-full object-contain"
-          />
-          <button
-            type="button"
-            aria-label="Previous"
-            onClick={prev}
-            className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 px-3 py-2 text-xl leading-none text-white hover:bg-black/70"
+        <div
+          className="grid w-full max-w-6xl overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-zinc-900 md:h-[85vh] md:grid-cols-3"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Kolom Kiri: Foto bersih (2/3) */}
+          <div
+            className="relative flex min-h-[240px] cursor-zoom-in items-center justify-center bg-zinc-950/50 md:col-span-2 md:min-h-0 overflow-hidden"
+            onClick={() => setIsZoomed(!isZoomed)}
           >
-            ‹
-          </button>
-          <button
-            type="button"
-            aria-label="Next"
-            onClick={next}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 px-3 py-2 text-xl leading-none text-white hover:bg-black/70"
-          >
-            ›
-          </button>
-          <span className="absolute bottom-3 left-3 rounded-full bg-black/50 px-2 py-0.5 text-xs text-white">
-            {index + 1} / {photos.length}
-          </span>
-        </div>
+            <Image
+              src={resolveImageUrl(photo.imageUrl)}
+              alt={photo.title}
+              width={1400}
+              height={1000}
+              unoptimized
+              className={`h-full w-full object-contain transition-transform duration-300 ${isZoomed ? 'scale-150' : 'scale-100'}`}
+            />
+            <span className="absolute top-3 right-3 rounded-full bg-black/50 px-2 py-0.5 text-xs text-white opacity-0 hover:opacity-100 transition-opacity">
+              {isZoomed ? 'Klik untuk memperkecil' : 'Klik untuk memperbesar'}
+            </span>
+            <button
+              type="button"
+              aria-label="Previous"
+              onClick={(e) => { e.stopPropagation(); prev(); }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 px-3 py-2 text-xl leading-none text-white hover:bg-black/70"
+            >
+              ‹
+            </button>
+            <button
+              type="button"
+              aria-label="Next"
+              onClick={(e) => { e.stopPropagation(); next(); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 px-3 py-2 text-xl leading-none text-white hover:bg-black/70"
+            >
+              ›
+            </button>
+            <span className="absolute bottom-3 left-3 rounded-full bg-black/50 px-2 py-0.5 text-xs text-white">
+              {index + 1} / {photos.length}
+            </span>
+          </div>
 
-        {/* Kolom Kanan: Sidebar detail */}
-        <div className="flex max-h-[50vh] flex-col gap-3 overflow-y-auto p-5 md:max-h-[85vh] md:border-l md:border-zinc-100 dark:border-zinc-800">
+        {/* Kolom Kanan: Sidebar detail (1/3) */}
+        <div className="flex max-h-[50vh] flex-col gap-3 overflow-y-auto p-6 md:max-h-[85vh] md:border-l md:border-zinc-100 dark:border-zinc-800 md:col-span-1">
           <div className="flex items-start justify-between gap-2">
             <h2 className="text-xl font-bold text-zinc-900 dark:text-white">{photo.title}</h2>
             <button
@@ -161,7 +169,7 @@ export function Lightbox({ photos, index, onClose, onNavigate, onFilterByCamera 
               type="button"
               onClick={handleCameraClick}
               title="Filter galeri dengan kamera ini"
-              className="flex items-center gap-1 rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700"
+              className="inline-flex items-center gap-1 rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-800 dark:text-zinc-300 dark:hover:bg-zinc-700 w-fit"
             >
               <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
               {photo.camera}

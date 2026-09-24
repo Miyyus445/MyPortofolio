@@ -21,6 +21,7 @@ export function PhotoCard({ photo, onOpen, onFilterByCamera }: Props) {
   const [showTranslation, setShowTranslation] = useState(false);
   const [translatedText, setTranslatedText] = useState<string | null>(null);
   const [isTranslating, setIsTranslating] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const handleTranslateClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -114,23 +115,42 @@ export function PhotoCard({ photo, onOpen, onFilterByCamera }: Props) {
       <div className="p-3">
         <h3 className="font-semibold text-sm">{photo.title}</h3>
         {displayDescription && (
-          <p className="mt-1 text-xs text-zinc-500 line-clamp-2">{displayDescription}</p>
+          <p className={`mt-1 text-sm text-zinc-400 ${!isExpanded ? 'line-clamp-4' : ''}`}>
+            {displayDescription}
+          </p>
         )}
         {(photo.description || photo.descriptionId) && (
-          <button
-            type="button"
-            onClick={handleTranslateClick}
-            className="mt-1.5 text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
-            aria-label={showTranslation ? "Tampilkan Inggris" : "Terjemahkan ke Indonesia"}
-          >
-            {isTranslating ? (
-              <span className="animate-pulse">Menerjemahkan...</span>
-            ) : showTranslation ? (
-              <>English</>
-            ) : (
-              <>Terjemahkan</>
-            )}
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
+              className="text-xs text-zinc-500 hover:text-zinc-400 underline flex items-center gap-1"
+            >
+              {isExpanded ? 'Sembunyikan' : 'Baca selengkapnya...'}
+            </button>
+            <div className="mt-3 pt-2 border-t border-zinc-800/50">
+              <button
+                type="button"
+                onClick={handleTranslateClick}
+                className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                aria-label={showTranslation ? "Tampilkan Inggris" : "Terjemahkan ke Indonesia"}
+              >
+                {isTranslating ? (
+                  <span className="animate-pulse">Menerjemahkan...</span>
+                ) : showTranslation ? (
+                  <>
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12a9 9 0 009-9V2a9 9 0 00-9-9H3v14h3m9 9H7a9 9 0 01-9-9V2a9 9 0 019-9h3m9 9v1a9 9 0 01-9 9h-3m-6 0H7a9 9 0 01-9-9V2a9 9 0 019-9h3"/></svg>
+                    English
+                  </>
+                ) : (
+                  <>
+                    <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5h12a9 9 0 009-9V2a9 9 0 00-9-9H3v14h3m9 9H7a9 9 0 01-9-9V2a9 9 0 019-9h3m9 9v1a9 9 0 01-9 9h-3m-6 0H7a9 9 0 01-9-9V2a9 9 0 019-9h3"/></svg>
+                    Terjemahkan
+                  </>
+                )}
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
