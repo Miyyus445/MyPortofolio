@@ -29,31 +29,43 @@ export function ProjectCard({ project }: { project: Project }) {
   const showImage = isValidImageSrc(resolvedThumbnail) && !imgError;
 
   return (
-    <article className="flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+    <article className="grid grid-cols-1 md:grid-cols-3 gap-6 overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60 p-2 md:p-3">
       {showImage ? (
-        <Image
-          src={resolvedThumbnail}
-          alt={project.title}
-          width={800}
-          height={450}
-          unoptimized
-          className="h-44 w-full object-cover"
-          onError={() => setImgError(true)}
-        />
-      ) : null}
-      <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-lg font-bold">{project.title}</h3>
-        <p className="mt-1 flex-1 text-sm text-zinc-600 dark:text-zinc-400">{project.description}</p>
-        <div className="mt-3 flex flex-wrap gap-2">
-          {project.techStack.map((tech) => (
-            <span key={tech} className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium dark:bg-zinc-800">
-              {tech}
-            </span>
-          ))}
+        <div className="md:col-span-2 w-full h-full min-h-[280px] relative rounded-xl overflow-hidden bg-zinc-950">
+          <Image
+            src={resolvedThumbnail}
+            alt={project.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 66vw"
+            unoptimized
+            className="object-cover"
+            onError={() => setImgError(true)}
+          />
         </div>
-        <div className="mt-4 flex gap-3 text-sm font-semibold">
-          {project.repoUrl ? <a href={project.repoUrl} target="_blank" rel="noreferrer" className="hover:underline">Repo →</a> : null}
-          {project.demoUrl ? <a href={project.demoUrl} target="_blank" rel="noreferrer" className="hover:underline">Live Demo →</a> : null}
+      ) : null}
+      <div className="md:col-span-1 p-4 md:p-6 flex flex-col justify-between">
+        <div>
+          <h3 className="text-xl font-bold text-white">{project.title}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-zinc-400">{project.description}</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {project.techStack.map((tech) => (
+              <span key={tech} className="rounded-full bg-zinc-800 px-3 py-1 text-xs font-medium text-zinc-200">
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="mt-6 flex gap-4 text-sm font-semibold">
+          {project.repoUrl ? (
+            <a href={project.repoUrl} target="_blank" rel="noreferrer" className="text-zinc-200 hover:underline">
+              Repo →
+            </a>
+          ) : null}
+          {project.demoUrl ? (
+            <a href={project.demoUrl} target="_blank" rel="noreferrer" className="text-zinc-200 hover:underline">
+              Live Demo →
+            </a>
+          ) : null}
         </div>
       </div>
     </article>

@@ -38,9 +38,9 @@ export function ProjectsSection({ limit }: { limit?: number }) {
 
   if (status === "loading") {
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" aria-busy="true" aria-label="Memuat projects">
-        {Array.from({ length: 3 }).map((_, i) => (
-          <Skeleton key={i} className="h-72" />
+      <div className="flex flex-col gap-8 w-full max-w-5xl mx-auto" aria-busy="true" aria-label="Memuat projects">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <Skeleton key={i} className="h-96" />
         ))}
       </div>
     );
@@ -50,7 +50,7 @@ export function ProjectsSection({ limit }: { limit?: number }) {
   if (projects.length === 0) return <p className="text-zinc-500">Belum ada project.</p>;
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+    <div className="flex flex-col gap-8 w-full max-w-5xl mx-auto">
       {projects.map((project) => (
         <ProjectCard key={project.id} project={project} />
       ))}
