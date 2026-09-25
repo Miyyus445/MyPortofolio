@@ -3,7 +3,7 @@ import Link from "next/link";
 export function Hero() {
   return (
     <section className="mx-auto max-w-6xl px-4 pb-12 pt-16 sm:px-6 sm:pt-24">
-      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-zinc-500">Photographer & Software Engineer</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.25em] text-zinc-500">Azmi Abiyyu Sakha — Photographer & Software Engineer</p>
       <h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-tight sm:text-6xl">
         Capturing light, shipping software.
       </h1>

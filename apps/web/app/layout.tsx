@@ -13,7 +13,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Portofolio — Photography & Engineering",
+  title: "Azmi Abiyyu Sakha — Photography & Engineering",
   description: "Photography gallery, IT projects, and experience.",
 };
 
