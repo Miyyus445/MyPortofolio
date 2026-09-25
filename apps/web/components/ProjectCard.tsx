@@ -1,11 +1,39 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import type { Project } from "../lib/types";
 
+function isValidImageSrc(src: string | null | undefined): src is string {
+  if (!src) return false;
+  const trimmed = src.trim();
+  if (!trimmed) return false;
+  // Izinkan path lokal (/...) dan URL http(s) valid. Tolak string bebas
+  // yang membuat next/image melempar "Invalid src prop".
+  if (trimmed.startsWith("/")) return true;
+  try {
+    const url = new URL(trimmed);
+    return url.protocol === "http:" || url.protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 export function ProjectCard({ project }: { project: Project }) {
+  const [imgError, setImgError] = useState(false);
+  const showImage = isValidImageSrc(project.thumbnail) && !imgError;
+
   return (
     <article className="flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-      {project.thumbnail ? (
-        <Image src={project.thumbnail} alt={project.title} width={800} height={450} className="h-44 w-full object-cover" />
+      {showImage ? (
+        <Image
+          src={(project.thumbnail as string).trim()}
+          alt={project.title}
+          width={800}
+          height={450}
+          className="h-44 w-full object-cover"
+          onError={() => setImgError(true)}
+        />
       ) : null}
       <div className="flex flex-1 flex-col p-5">
         <h3 className="text-lg font-bold">{project.title}</h3>
