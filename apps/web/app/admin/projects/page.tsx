@@ -7,6 +7,8 @@ import {
   createProject,
   updateProject,
   deleteProject,
+  uploadPhoto,
+  resolveImageUrl,
 } from "@/lib/api";
 import type { Project, CreateProjectInput, UpdateProjectInput } from "@/lib/types";
 
@@ -26,6 +28,9 @@ export default function AdminProjectsPage() {
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState("");
+  const [isDragging, setIsDragging] = useState(false);
 
   const loadProjects = async () => {
     setLoading(true);
@@ -48,6 +53,20 @@ export default function AdminProjectsPage() {
     setEditingId(null);
     setShowForm(false);
     setError("");
+    setSelectedFile(null);
+    setPreviewUrl("");
+    setIsDragging(false);
+  };
+
+  const handleFileSelect = (file: File | undefined | null) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setError("File harus berupa gambar.");
+      return;
+    }
+    setError("");
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
   };
 
   const handleEdit = (project: Project) => {
@@ -60,6 +79,9 @@ export default function AdminProjectsPage() {
       thumbnail: project.thumbnail || "",
     });
     setEditingId(project.id);
+    setSelectedFile(null);
+    setPreviewUrl("");
+    setIsDragging(false);
     setShowForm(true);
   };
 
@@ -68,8 +90,14 @@ export default function AdminProjectsPage() {
     setError("");
     setSaving(true);
     try {
+      let thumbnail = (formData.thumbnail ?? "").trim();
+      if (selectedFile) {
+        const uploadResult = await uploadPhoto(selectedFile, token!);
+        thumbnail = uploadResult.imageUrl;
+      }
       const data = {
         ...formData,
+        thumbnail,
         techStack: formData.techStack.filter(Boolean),
       };
       if (editingId) {
@@ -194,12 +222,61 @@ export default function AdminProjectsPage() {
               />
             </div>
             <div>
+              <span className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
+                Thumbnail <span className="font-normal text-zinc-500">(isi salah satu: file lokal atau URL)</span>
+              </span>
+              <div
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  setIsDragging(false);
+                  handleFileSelect(e.dataTransfer.files?.[0]);
+                }}
+                className={`rounded-lg border-2 border-dashed p-4 text-center transition-colors ${isDragging
+                  ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                  : "border-zinc-300 dark:border-zinc-600"
+                  }`}
+              >
+                <label htmlFor="thumbnailFile" className="block text-sm text-zinc-700 dark:text-zinc-300 cursor-pointer">
+                  Seret & letakkan file gambar di sini, atau{" "}
+                  <span className="text-blue-600 dark:text-blue-400 underline">pilih file</span>
+                </label>
+                <input
+                  id="thumbnailFile"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileSelect(e.target.files?.[0])}
+                  className="mt-2 block w-full text-sm text-zinc-600 dark:text-zinc-400 file:mr-3 file:rounded-lg file:border-0 file:bg-zinc-200 file:px-3 file:py-1.5 file:text-sm file:font-medium hover:file:bg-zinc-300 dark:file:bg-zinc-700 dark:hover:file:bg-zinc-600"
+                />
+                {selectedFile && (
+                  <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400">
+                    Dipilih: {selectedFile.name}
+                    <button
+                      type="button"
+                      onClick={() => { setSelectedFile(null); setPreviewUrl(""); }}
+                      className="ml-2 text-red-600 dark:text-red-400 underline"
+                    >
+                      Hapus
+                    </button>
+                  </p>
+                )}
+                {(previewUrl || (!selectedFile && (formData.thumbnail ?? "").trim())) && (
+                  <img
+                    src={previewUrl || resolveImageUrl((formData.thumbnail ?? "").trim())}
+                    alt="Pratinjau thumbnail"
+                    className="mx-auto mt-3 max-h-40 rounded-lg object-contain"
+                  />
+                )}
+              </div>
+              <div className="my-2 text-center text-xs text-zinc-500 dark:text-zinc-400">— atau —</div>
               <label htmlFor="thumbnail" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Thumbnail URL
+                Thumbnail URL / path lokal
               </label>
               <input
                 id="thumbnail"
-                type="url"
+                type="text"
+                placeholder="https://... atau /uploads/..."
                 value={formData.thumbnail}
                 onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
                 className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -249,7 +326,7 @@ export default function AdminProjectsPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {project.thumbnail && (
-                        <img src={project.thumbnail} alt={project.title} className="w-12 h-8 object-cover rounded" loading="lazy" />
+                        <img src={resolveImageUrl(project.thumbnail)} alt={project.title} className="w-12 h-8 object-cover rounded" loading="lazy" />
                       )}
                       <div>
                         <p className="font-medium text-zinc-900 dark:text-white">{project.title}</p>

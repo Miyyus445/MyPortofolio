@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { resolveImageUrl } from "../lib/api";
 import type { Project } from "../lib/types";
 
 function isValidImageSrc(src: string | null | undefined): src is string {
@@ -21,16 +22,21 @@ function isValidImageSrc(src: string | null | undefined): src is string {
 
 export function ProjectCard({ project }: { project: Project }) {
   const [imgError, setImgError] = useState(false);
-  const showImage = isValidImageSrc(project.thumbnail) && !imgError;
+  const rawThumbnail = project.thumbnail?.trim() ?? "";
+  // Dukung path lokal relatif (/uploads/...) yang diserve API backend:
+  // resolve ke URL absolut, lalu validasi sebelum ke next/image.
+  const resolvedThumbnail = rawThumbnail ? resolveImageUrl(rawThumbnail) : "";
+  const showImage = isValidImageSrc(resolvedThumbnail) && !imgError;
 
   return (
     <article className="flex flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
       {showImage ? (
         <Image
-          src={(project.thumbnail as string).trim()}
+          src={resolvedThumbnail}
           alt={project.title}
           width={800}
           height={450}
+          unoptimized
           className="h-44 w-full object-cover"
           onError={() => setImgError(true)}
         />
