@@ -11,6 +11,7 @@ import type {
   CreateExperienceInput,
   UpdateExperienceInput,
 } from "./types";
+import { mockExperience, mockPhotos, mockProjects } from "./mock-data";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -28,20 +29,35 @@ async function getJson<T>(path: string): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export function fetchPhotos(params?: { featured?: boolean; limit?: number }): Promise<Photo[]> {
+export async function fetchPhotos(params?: { featured?: boolean; limit?: number }): Promise<Photo[]> {
   const search = new URLSearchParams();
   if (params?.featured !== undefined) search.set("featured", String(params.featured));
   if (params?.limit !== undefined) search.set("limit", String(params.limit));
   const qs = search.toString();
-  return getJson<Photo[]>(`/api/photos${qs ? `?${qs}` : ""}`);
+  try {
+    return await getJson<Photo[]>(`/api/photos${qs ? `?${qs}` : ""}`);
+  } catch {
+    let fallback = [...mockPhotos];
+    if (params?.featured) fallback = fallback.filter((p) => p.isFeatured);
+    if (params?.limit !== undefined) fallback = fallback.slice(0, params.limit);
+    return fallback;
+  }
 }
 
-export function fetchProjects(limit?: number): Promise<Project[]> {
-  return getJson<Project[]>(`/api/projects${limit !== undefined ? `?limit=${limit}` : ""}`);
+export async function fetchProjects(limit?: number): Promise<Project[]> {
+  try {
+    return await getJson<Project[]>(`/api/projects${limit !== undefined ? `?limit=${limit}` : ""}`);
+  } catch {
+    return limit !== undefined ? mockProjects.slice(0, limit) : [...mockProjects];
+  }
 }
 
-export function fetchExperience(): Promise<ExperienceItem[]> {
-  return getJson<ExperienceItem[]>("/api/experience");
+export async function fetchExperience(): Promise<ExperienceItem[]> {
+  try {
+    return await getJson<ExperienceItem[]>("/api/experience");
+  } catch {
+    return [...mockExperience];
+  }
 }
 
 function getStoredToken(): string | null {
