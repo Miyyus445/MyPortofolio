@@ -4,12 +4,12 @@
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
-    "generate": "prisma generate",
-    "db:seed": "bun prisma/seed.ts"
-  },
+  "db:push": "prisma db push --skip-generate",
+  "generate": "prisma generate"
+},
   "dependencies": {
     "@prisma/adapter-pg": "^7.10.0",
-    "@prisma/client": "^7.10.0",
+    "@prisma/client": "5.22.0",
     "bcryptjs": "^3.0.3",
     "pg": "^8.23.0"
   },
@@ -17,6 +17,6 @@
     "@types/bun": "^1.4.2",
     "@types/node": "^26.5.1",
     "@types/pg": "^8.23.1",
-    "prisma": "^7.10.0"
+    "prisma": "5.22.0"
   }
 }

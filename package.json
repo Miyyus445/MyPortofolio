@@ -8,7 +8,9 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "db:push": "bun --cwd packages/db db:push",
+    "db:generate": "bun --cwd packages/db generate"
   },
   "devDependencies": {
     "prettier": "3.9.6",
